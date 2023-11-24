@@ -8,7 +8,7 @@ except ImportError:
     print("No module named 'google' found")
  
 def getting_artist_link():
-    query = "" #keyword on gooogle
+    query = "mvb" #keyword on gooogle
     links = []
     for j in search(query, tld="co.in", num=1, stop=1, pause=3): 
         links.append(j)
@@ -16,7 +16,8 @@ def getting_artist_link():
     time.sleep(2)
     #print(url_result)
     #print (re.findall(r'(?<=/)\w+$',url_result)[-1])
-    code_crack = re.findall(r'(?<=/)\w+$',url_result[-1])
+
+    code_crack = re.findall(r'(?<=/)\w+$',url_result[-1]) # list out of index - code_crack don't work anymore
     code = code_crack[0]
 
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="22d4b6997d4b4d6faf63ab9d78278fd5",
