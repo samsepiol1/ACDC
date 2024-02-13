@@ -1,6 +1,6 @@
-## AC/DC
+## RC/MC
 
-AC/DC é módulo proposto para que o usuário possa descobrir em quais plataformas famosas um determinado álbum está disponível.
+RC/MC - É um módulo proposto para descobrir em quais plataformas um determinado conteúdo está disponível
 
 ### Spotify
 
