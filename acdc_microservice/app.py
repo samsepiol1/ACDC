@@ -1,6 +1,7 @@
 import mysql.connector
 from flask import Flask, request, jsonify
 import requests
+from bing_image_urls import bing_image_urls
 
 app = Flask(__name__)
 
@@ -67,6 +68,42 @@ def update_recommendation():
             return jsonify({'message': 'Falha ao acessar a API do Deezer.'}), 500
     except Exception as e:
         return jsonify({'message': str(e)}), 500
+    
+
+# Rota para pesquisa da imagem
+@app.route('/update_image', methods=['POST'])
+def update_image():
+        try:
+            # Obtém os dados do POST
+            data = request.json
+            nome = data.get('nome')
+            id_recomendacao = data.get('id')
+
+            # Faz uma busca por uma imagem com base no nome do álbum e do artista
+            image_urls = bing_image_urls(nome, limit=1)
+
+            # Verifica se foram encontradas URLs de imagens
+            if image_urls:
+                image_url = image_urls[0]
+
+                # Conecta ao banco de dados MySQL
+                connection = mysql.connector.connect(**db_config)
+                cursor = connection.cursor()
+
+                # Atualiza o registro no banco de dados com o link da imagem encontrada
+                update_query = "UPDATE recomendacoes SET img = %s WHERE id = %s"
+                cursor.execute(update_query, (image_url, id_recomendacao))
+                connection.commit()
+
+                # Fecha a conexão com o banco de dados
+                cursor.close()
+                connection.close()
+
+                return jsonify({'message': f'Imagem atualizada com sucesso. Nova URL da imagem: {image_url}'}), 200
+            else:
+                return jsonify({'message': 'Nenhuma URL de imagem encontrada.'}), 404
+        except Exception as e:
+            return jsonify({'message': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
