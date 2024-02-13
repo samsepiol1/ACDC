@@ -26,9 +26,11 @@ def update_recommendation():
         print(nome)
 
         # Faz uma requisição para o Deezer para buscar o link
-        deezer_url = f"https://api.deezer.com/search?q={nome}"
-        deezer_response = requests.get(deezer_url)
+        artist_name, album_name = nome.split(' - ')
 
+        # Formata a URL da API do Deezer com o nome do artista e do álbum
+        deezer_url = f"https://api.deezer.com/search/album/?q={album_name} {artist_name}&limit=1"
+        deezer_response = requests.get(deezer_url)
         # Verifica se a requisição ao Deezer foi bem-sucedida
         if deezer_response.status_code == 200:
             # Extrai os dados da resposta em formato JSON
