@@ -2,6 +2,8 @@ import mysql.connector
 from flask import Flask, request, jsonify
 import requests
 from bing_image_urls import bing_image_urls
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 
 app = Flask(__name__)
 
@@ -12,6 +14,69 @@ db_config = {
     'password': '',
     'database': 'recomendacoes'
 }
+
+
+
+def search_album(album_name, artist_name):
+    # Chaves da API do Spotify
+    client_id = '22d4b6997d4b4d6faf63ab9d78278fd5'
+    client_secret = '8074223b87354205b8c5946589d9aa73'
+
+    # Configuração da autenticação com a API do Spotify
+    client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+    # Pesquisa do álbum
+    results = sp.search(q=f"album:{album_name} artist:{artist_name}", type='album', limit=1)
+
+    # Verificação se o álbum foi encontrado e retornar o Link
+
+    if results['albums']['items']:
+        album = results['albums']['items'][0]
+        spotify_link = album['external_urls']['spotify']
+        return spotify_link
+    else:
+        return None
+
+
+
+
+@app.route('/search_album', methods=['POST'])
+def search_album_api():
+    try:
+        data = request.json
+        title = data.get('nome')
+
+        # Extrair nome do artista e nome do álbum do título
+        artist_name, album_name = title.split(' - ')
+
+        # Pesquisar o álbum
+        spotify_link = search_album(album_name, artist_name)
+        print(spotify_link)
+        
+
+        if spotify_link:
+            # Conectar ao banco de dados MySQL
+            connection = mysql.connector.connect(**db_config)
+            cursor = connection.cursor()
+
+            # Atualizar o registro no banco de dados com o link do Spotify
+            update_query = "UPDATE recomendacoes SET reclink_spotify = %s WHERE titulo = %s"
+            print(update_query)
+            cursor.execute(update_query, (spotify_link, title))
+            connection.commit()
+
+            # Fechar a conexão com o banco de dados
+            cursor.close()
+            connection.close()
+
+            return jsonify({'message': 'Link do Spotify salvo com sucesso.'}), 200
+        else:
+            return jsonify({'message': 'Álbum não encontrado.'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 # Rota para atualizar uma recomendação
 @app.route('/update_recommendation', methods=['POST'])
@@ -53,6 +118,7 @@ def update_recommendation():
 
                 # Atualiza o registro no banco de dados com o link encontrado
                 update_query = "UPDATE recomendacoes SET reclink = %s WHERE id = %s"
+                print(update_query)
                 cursor.execute(update_query, (link_rec, id_recomendacao))
                 
                 connection.commit()
