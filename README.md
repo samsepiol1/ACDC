@@ -1,5 +1,5 @@
 ## AC/DC
-O microserviço ACDC é responsável por capturar links onde um determinado conteúdo está disponível em várias plataformas. Após encontrar o link o ACDC salva os resultados automaticamente no banco de dados MySQL ao receber uma requisição POST. 
+O microserviço ACDC é responsável por capturar links onde um determinado conteúdo está disponível em várias plataformas. Após encontrar o link o ACDC salva os resultados automaticamente no banco de dados MySQL ao receber uma requisição POST do Backend.  
 
 ## Tecnologias Utilizadas
 
@@ -7,7 +7,12 @@ O microserviço ACDC é responsável por capturar links onde um determinado cont
 
 
 ## Arquitetura Idealizada
+
+Na arquitetura proposta tínhamos duas opções: receber o método POST da API e devolver com PUT atualizando os campos JSON ou receber o POST da API e salvar diretamente no banco de dados as colunas responsáveis pelos links. A segunda opção paraceu mais vantajosa do ponto de vista da performance, em um primeiro momento. 
+
 <img src="https://i.ibb.co/gd2bzmQ/Whats-App-Image-2024-02-15-at-14-55-08.jpg" alt="Whats-App-Image-2024-02-15-at-14-55-08" border="0"></a>
+
+
 
 
 
