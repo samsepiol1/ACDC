@@ -13,9 +13,6 @@ Na arquitetura proposta tínhamos duas opções: receber o método POST da API e
 <img src="https://i.ibb.co/gd2bzmQ/Whats-App-Image-2024-02-15-at-14-55-08.jpg" alt="Whats-App-Image-2024-02-15-at-14-55-08" border="0"></a>
 
 
-## Desligamento do serviço
-
-Durante a evolução da plataforma mudamos como vai ser estruturado o software para que faça mais sentido para os desenvolvedores
 
 
 
